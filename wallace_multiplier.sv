@@ -250,7 +250,7 @@ module wallace_multiplier_16bit (
     assign stage1_out[7][30] = partial_products_reg[15][30];
     
     
-    // Stage 1 Register 
+    // Stage 2 Register 
 
     always_ff @(posedge clock) begin
         stage1_out_reg <= stage1_out;
@@ -335,7 +335,7 @@ module wallace_multiplier_16bit (
     HA s2_h_6_29(stage1_out_reg[6][29], stage1_out_reg[7][29], stage2_out[2][29], stage2_out[3][30]);
     HA s2_h_6_30(stage1_out_reg[6][30], stage1_out_reg[7][30], stage2_out[2][30], stage2_out[3][31]);
     
-    // Stage 2 Register
+    // Stage 3 Register
     always_ff @(posedge clock) begin
         stage2_out_reg <= stage2_out;
     end
@@ -412,7 +412,7 @@ module wallace_multiplier_16bit (
     assign stage3_out[0][31] = stage2_out_reg[3][31];
     
     
-    // Stage 3 register 
+    // Stage 4 register 
     always_ff @(posedge clock) begin
         stage3_out_reg <= stage3_out;
     end
@@ -421,6 +421,8 @@ module wallace_multiplier_16bit (
     logic        final_carry_out;
     logic [31:0] final_sum;
 
+    // Kogge-Stone adder 
+    // Output P is directly connected to adder
     kogge_stone_adder_32 final_stage_adder (
         .A    (stage3_out_reg[0]),
         .B    (stage3_out_reg[1]),
@@ -429,7 +431,6 @@ module wallace_multiplier_16bit (
         .C_out   (final_carry_out)
     );
 
-//    always_ff @(posedge clock) begin
-//        P <= final_sum;
-//    end
+
+
 endmodule
